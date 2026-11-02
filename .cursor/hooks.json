@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/brakeman-before-push.sh",
+        "matcher": "git push",
+        "failClosed": false
+      }
+    ]
+  }
+}
