@@ -28,11 +28,13 @@ What this governs. The graph read, and the absence of a scope key on every write
 
 ### AD-02. The browser owns generation rank
 
-The graph document contains people, unions, and links. It contains neither a generation rank nor coordinates. A person with no parent link is rank 0. Any other person's rank is one greater than the highest rank among their parents, skipping a parent link that would repeat a person already on that chain. Spouse links do not change rank. elkjs draws one rank per generation, and spouses keep their own ranks when those ranks differ.
+The graph document contains people, unions, and links. It contains neither a generation rank nor coordinates. People who belong to the same parent cycle share one rank. That rank is 0 when no parent outside the cycle points at the cycle. Otherwise it is one greater than the highest rank among those outside parents. A person who is not in a cycle and has no parent is rank 0. Any other person's rank is one greater than the highest rank among their parents. Spouse links do not change rank. elkjs draws one rank per generation, and spouses keep their own ranks when those ranks differ.
 
-Why. Returning a rank computed in Postgres was refused: rank is a display fact, and the graph read returns people and links. Letting elkjs assign layers from every edge, spouse edges included, was refused: spouse links may form cycles, and a rank would stop meaning one generation.
+Why. Returning a rank computed in Postgres was refused: rank is a display fact, and the graph read returns people and links. Letting elkjs assign layers from every edge, spouse edges included, was refused: spouse links may form cycles, and a rank would stop meaning one generation. Skipping one parent link along a single walk was refused: when every person in a cycle has a parent, that walk picks a different rank depending on where it starts.
 
 What this governs. The graph payload and the canvas. When a later operation asks who descends from whom, Postgres recursive queries answer that. The graph read does not.
+
+People in one parent cycle now share a rank. The earlier walk skipped one repeating link and assigned a different rank depending on its starting person.
 
 ### AD-03. Writes are resources, and a spouse link creates the union
 
